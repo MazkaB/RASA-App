@@ -2,7 +2,7 @@
 
 ## 📋 **Overview**
 
-Tourist App Indonesia sekarang telah terintegrasi dengan **Google Maps API** untuk menyediakan:
+RASA sekarang telah terintegrasi dengan **Google Maps API** untuk menyediakan:
 - **Real-time Maps** dengan lokasi destinasi wisata
 - **Location Services** dan geolocation 
 - **Places API** untuk mencari tempat wisata terdekat
@@ -22,7 +22,7 @@ Tourist App Indonesia sekarang telah terintegrasi dengan **Google Maps API** unt
 
 2. **Create New Project**
    - Klik "Select a project" → "New Project"
-   - Project Name: `tourist-app-indonesia`
+   - Project Name: `rasa`
    - Klik "Create"
 
 ### **2. Enable Required APIs**
@@ -74,7 +74,7 @@ GOOGLE_TRANSLATE_API_KEY=AIzaSyBd_your_actual_api_key_here
 
 # Alternative: Service Account (more secure)
 # GOOGLE_APPLICATION_CREDENTIALS=./google-service-account.json
-# GOOGLE_PROJECT_ID=tourist-app-indonesia
+# GOOGLE_PROJECT_ID=rasa
 ```
 
 ### **2. Restart Backend Server**
@@ -260,7 +260,7 @@ HTTP referrers:
 - https://yourdomain.com/*
 
 Android apps:
-- Package name: com.touristapp.indonesia
+- Package name: com.rasa.indonesia
 - SHA-1: Your app signing certificate SHA-1
 ```
 
@@ -429,7 +429,7 @@ const photoUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&
 ✅ **Error handling** dan fallback systems  
 ✅ **Performance optimized** dengan caching  
 
-**Tourist App Indonesia sekarang memiliki fitur peta dan lokasi yang lengkap dan professional! 🗺️✨**
+**RASA sekarang memiliki fitur peta dan lokasi yang lengkap dan professional! 🗺️✨**
 
 ---
 

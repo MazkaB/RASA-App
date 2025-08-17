@@ -69,7 +69,7 @@ app.use('/api/ai', aiServicesRoutes);
 app.get('/api/health', (req, res) => {
   res.json({ 
     status: 'OK', 
-    message: 'Tourist App API with GCP Integration is running',
+    message: 'RASA API with GCP Integration is running',
     services: {
       firebase: '🔥 Ready',
       vision: '📸 Ready', 

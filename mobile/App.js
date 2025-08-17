@@ -906,8 +906,8 @@ export default function App() {
     return (
       <View style={styles.loadingContainer}>
         <View style={styles.loadingContent}>
-          <Text style={styles.loadingTitle}>Tourist App Indonesia</Text>
-          <Text style={styles.loadingSubtitle}>AI-Powered Travel Companion</Text>
+          <Text style={styles.loadingTitle}>RASA</Text>
+          <Text style={styles.loadingSubtitle}>Revolutionizing Asian Smart Travel</Text>
           <View style={styles.loadingIndicator}>
             <View style={styles.loadingDot} />
             <View style={[styles.loadingDot, { animationDelay: '0.2s' }]} />

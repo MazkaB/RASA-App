@@ -1,4 +1,4 @@
-# 🎨 **Professional Design System - Tourist App Indonesia**
+# 🎨 **Professional Design System - RASA**
 
 ## ✨ **Design Philosophy: Modern & Professional**
 
@@ -218,7 +218,7 @@ Body Text:
 
 ## 🎊 **Final Result: Enterprise-Grade Design**
 
-Tourist App Indonesia sekarang memiliki:
+RASA sekarang memiliki:
 
 ✨ **Premium Visual Identity**  
 ✨ **Professional Color System**  

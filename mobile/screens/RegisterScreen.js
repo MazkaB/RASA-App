@@ -177,7 +177,7 @@ export default function RegisterScreen({ onComplete }) {
     if (validateStep()) {
       Alert.alert(
         'Registration Complete!',
-        'Welcome to Tourist App Indonesia. Your personalized travel experience awaits!',
+        'Welcome to RASA. Your personalized travel experience awaits!',
         [
           {
             text: 'Start Exploring',

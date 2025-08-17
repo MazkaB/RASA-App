@@ -1,6 +1,6 @@
-# Tourist App Indonesia
+# RASA
 
-AI-Powered Travel Companion with Google Cloud Integration for Tourists in Indonesia
+Revolutionizing Asian Smart Travel - AI-Powered Travel Assistant for Indonesia
 
 ## 🌟 Features
 
@@ -283,10 +283,10 @@ npx expo start --web --port 19010
 ```bash
 # Server Configuration
 PORT=5000
-JWT_SECRET=tourist-app-indonesia-secret-key-2025
+JWT_SECRET=rasa-secret-key-2025
 
 # Database (Migrating to Firebase)
-MONGODB_URI=mongodb://localhost:27017/tourist-app-indonesia
+MONGODB_URI=mongodb://localhost:27017/rasa
 
 # Firebase Configuration
 FIREBASE_PROJECT_ID=your-firebase-project-id

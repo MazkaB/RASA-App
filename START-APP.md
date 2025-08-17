@@ -1,4 +1,4 @@
-# 🚀 **Quick Start Guide - Tourist App Indonesia**
+# 🚀 **Quick Start Guide - RASA**
 
 ## ⚡ **Cara Menjalankan Aplikasi**
 

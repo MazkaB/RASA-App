@@ -1,4 +1,4 @@
-# 🚀 **Deployment Guide - Tourist App Indonesia**
+# 🚀 **Deployment Guide - RASA**
 
 ## ✅ **Status Aplikasi: PRODUCTION READY!**
 
@@ -28,7 +28,7 @@
 
 ### **MongoDB Atlas Setup ✅**
 ```env
-MONGODB_URI=mongodb+srv://touristapp:touristapp123@cluster0.cwyhc5g.mongodb.net/tourist-app-indonesia?retryWrites=true&w=majority
+MONGODB_URI=mongodb+srv://touristapp:touristapp123@cluster0.cwyhc5g.mongodb.net/rasa?retryWrites=true&w=majority
 ```
 
 ### **Sample Data Loaded:**
@@ -224,6 +224,6 @@ curl -X POST http://localhost:5000/api/translation/translate \
 
 ---
 
-**🇮🇩 Tourist App Indonesia is now FULLY OPERATIONAL and ready to help tourists explore Indonesia!** 🎊
+**🇮🇩 RASA is now FULLY OPERATIONAL and ready to help tourists explore Indonesia!** 🎊
 
 **Access the app at: http://localhost:19006 or http://localhost:19008** 📱✨

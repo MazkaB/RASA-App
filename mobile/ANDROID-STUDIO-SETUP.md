@@ -136,7 +136,7 @@ npx eas-cli build --platform android --profile development
 
 ## ✨ Current App Highlights
 
-The Tourist App Indonesia is now running with:
+The RASA is now running with:
 - ✅ **Modern Professional UI** (not norak!)
 - ✅ **Google Material Design** color palette  
 - ✅ **Mobile-first responsive** layout

@@ -1,11 +1,11 @@
-# 🔥 **Complete GCP Setup Guide for Tourist App Indonesia**
+# 🔥 **Complete GCP Setup Guide for RASA**
 
 ## 📋 **Prerequisites Checklist**
 
 ### **1. Google Cloud Platform Account**
 - [ ] Create GCP account with $50 free credit
 - [ ] Enable billing account
-- [ ] Create new project: `tourist-app-indonesia`
+- [ ] Create new project: `rasa`
 
 ### **2. Firebase Project Setup**
 - [ ] Create Firebase project (use same GCP project)
@@ -35,25 +35,25 @@ gcloud services enable firestore.googleapis.com
 ### **Step 1: Create Service Account**
 ```bash
 # Create service account
-gcloud iam service-accounts create tourist-app-service \
-    --display-name="Tourist App Service Account"
+gcloud iam service-accounts create rasa-service \
+    --display-name="RASA Service Account"
 
 # Grant necessary roles
 gcloud projects add-iam-policy-binding PROJECT_ID \
-    --member="serviceAccount:tourist-app-service@PROJECT_ID.iam.gserviceaccount.com" \
+    --member="serviceAccount:rasa-service@PROJECT_ID.iam.gserviceaccount.com" \
     --role="roles/aiplatform.user"
 
 gcloud projects add-iam-policy-binding PROJECT_ID \
-    --member="serviceAccount:tourist-app-service@PROJECT_ID.iam.gserviceaccount.com" \
+    --member="serviceAccount:rasa-service@PROJECT_ID.iam.gserviceaccount.com" \
     --role="roles/ml.developer"
 
 gcloud projects add-iam-policy-binding PROJECT_ID \
-    --member="serviceAccount:tourist-app-service@PROJECT_ID.iam.gserviceaccount.com" \
+    --member="serviceAccount:rasa-service@PROJECT_ID.iam.gserviceaccount.com" \
     --role="roles/storage.admin"
 
 # Create and download service account key
-gcloud iam service-accounts keys create ./tourist-app-service-key.json \
-    --iam-account=tourist-app-service@PROJECT_ID.iam.gserviceaccount.com
+gcloud iam service-accounts keys create ./rasa-service-key.json \
+    --iam-account=rasa-service@PROJECT_ID.iam.gserviceaccount.com
 ```
 
 ### **Step 2: Get Individual API Keys**
@@ -77,7 +77,7 @@ gcloud iam service-accounts keys create ./tourist-app-service-key.json \
 # Server Configuration
 PORT=5000
 NODE_ENV=development
-JWT_SECRET=tourist-app-indonesia-secret-key-2025
+JWT_SECRET=rasa-secret-key-2025
 
 # Firebase Configuration
 FIREBASE_PROJECT_ID=your-firebase-project-id
@@ -86,7 +86,7 @@ FIREBASE_CLIENT_EMAIL=firebase-adminsdk-xxxxx@your-project.iam.gserviceaccount.c
 
 # Google Cloud APIs
 GOOGLE_CLOUD_PROJECT_ID=your-gcp-project-id
-GOOGLE_APPLICATION_CREDENTIALS=./tourist-app-service-key.json
+GOOGLE_APPLICATION_CREDENTIALS=./rasa-service-key.json
 
 # Individual API Keys
 GOOGLE_TRANSLATE_API_KEY=AIzaSyBxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -99,7 +99,7 @@ VERTEX_AI_LOCATION=us-central1
 VERTEX_AI_MODEL=text-bison@001
 
 # MongoDB (Legacy - will migrate to Firestore)
-MONGODB_URI=mongodb://localhost:27017/tourist-app-indonesia
+MONGODB_URI=mongodb://localhost:27017/rasa
 ```
 
 ### **Mobile Environment**
@@ -134,7 +134,7 @@ npm install firebase expo-camera expo-av expo-speech expo-file-system react-nati
 
 ### **3. Setup Firebase SDK Files**
 Place service account JSON in:
-- `backend/tourist-app-service-key.json`
+- `backend/rasa-service-key.json`
 - Add to `.gitignore`
 
 ## 🎯 **Features Implementation Checklist**
@@ -255,4 +255,4 @@ expo start --web
 npm run test:all
 ```
 
-**🎯 Ready to build the most advanced tourist app in Indonesia!** 🇮🇩🚀
+**🎯 Ready to build the most advanced RASA app in Indonesia!** 🇮🇩🚀

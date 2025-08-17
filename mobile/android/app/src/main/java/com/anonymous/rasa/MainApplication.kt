@@ -1,4 +1,4 @@
-package com.anonymous.touristappindonesia
+package com.anonymous.rasa
 
 import android.app.Application
 import android.content.res.Configuration
