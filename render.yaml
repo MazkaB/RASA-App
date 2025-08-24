@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: rasa-backend
+    runtime: node
+    repo: https://github.com/MazkaB/RASA-App
+    branch: main
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
