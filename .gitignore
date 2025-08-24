@@ -71,18 +71,24 @@ firebase-debug.log
 .firebase/
 
 # Google Cloud
-*.json
 service-account-key.json
 gcp-service-key.json
 tourist-app-service-key.json
+firebase-service-key.json
+*-key.json
+!package.json
+!package-lock.json
+!app.json
+!eas.json
+!tsconfig.json
 
 # Temporary files
 *.tmp
 *.temp
 
-# Lock files
-package-lock.json
-yarn.lock
+# Lock files (optional - uncomment if you want to ignore lock files)
+# package-lock.json
+# yarn.lock
 
 # MacOS
 .DS_Store
