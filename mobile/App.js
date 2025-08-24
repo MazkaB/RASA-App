@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { 
   StyleSheet, Text, View, SafeAreaView, ScrollView, 
-  TouchableOpacity, RefreshControl, Dimensions, Modal, Alert, Image
+  TouchableOpacity, RefreshControl, Dimensions, Modal, Alert, Image, Animated
 } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -14,6 +14,11 @@ import AIFeaturesScreen from './screens/AIFeaturesScreen';
 import MapScreen from './components/MapScreen';
 import DestinationsScreen from './screens/DestinationsScreen';
 import RegisterScreen from './screens/RegisterScreen';
+import RoleSelectionScreen from './screens/RoleSelectionScreen';
+import LoginScreen from './screens/LoginScreen';
+
+// Import Guide App
+import GuideApp from './GuideApp';
 
 // Import service components
 import SIMCardLocator from './components/SIMCardLocator';
@@ -643,12 +648,29 @@ function HomeScreen({ navigation }) {
 }
 
 // Profile Screen with UserProfile integration
-function ProfileScreen() {
+function ProfileScreen({ onLogout }) {
   const [userProfile, setUserProfile] = useState(null);
   const [showFullProfile, setShowFullProfile] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const scaleAnim = useRef(new Animated.Value(0.9)).current;
 
   useEffect(() => {
     loadUserProfile();
+    // Entry animation
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 500,
+        useNativeDriver: true,
+      }),
+      Animated.spring(scaleAnim, {
+        toValue: 1,
+        friction: 8,
+        tension: 40,
+        useNativeDriver: true,
+      }),
+    ]).start();
   }, []);
 
   const loadUserProfile = async () => {
@@ -664,6 +686,38 @@ function ProfileScreen() {
 
   const updateProfile = (newProfile) => {
     setUserProfile(newProfile);
+  };
+
+  const handleLogout = () => {
+    setShowLogoutModal(true);
+  };
+
+  const confirmLogout = async () => {
+    try {
+      // Clear stored data
+      await AsyncStorage.multiRemove(['userProfile', 'userRole', 'savedEmail']);
+      
+      // Animate out
+      Animated.parallel([
+        Animated.timing(fadeAnim, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+        Animated.timing(scaleAnim, {
+          toValue: 0.9,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+      ]).start(() => {
+        if (onLogout) {
+          onLogout();
+        }
+      });
+    } catch (error) {
+      console.log('Error during logout:', error);
+      Alert.alert('Error', 'Failed to logout. Please try again.');
+    }
   };
 
   if (showFullProfile) {
@@ -813,13 +867,71 @@ function ProfileScreen() {
             </View>
           </View>
         )}
+
+        {/* Logout Button */}
+        <View style={styles.section}>
+          <TouchableOpacity 
+            style={styles.logoutButton}
+            onPress={handleLogout}
+            activeOpacity={0.8}
+          >
+            <Ionicons name="log-out-outline" size={20} color="#ea4335" />
+            <Text style={styles.logoutButtonText}>Logout</Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
+
+      {/* Logout Confirmation Modal */}
+      <Modal
+        visible={showLogoutModal}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setShowLogoutModal(false)}
+      >
+        <TouchableOpacity 
+          style={styles.modalOverlay}
+          activeOpacity={1}
+          onPress={() => setShowLogoutModal(false)}
+        >
+          <TouchableOpacity 
+            style={styles.logoutModalContent}
+            activeOpacity={1}
+          >
+            <View style={styles.logoutModalHeader}>
+              <View style={styles.logoutIconContainer}>
+                <Ionicons name="log-out-outline" size={32} color="#ea4335" />
+              </View>
+            </View>
+            
+            <Text style={styles.logoutModalTitle}>Confirm Logout</Text>
+            <Text style={styles.logoutModalMessage}>
+              Are you sure you want to logout? You'll need to login again to access your account.
+            </Text>
+            
+            <View style={styles.logoutModalButtons}>
+              <TouchableOpacity 
+                style={styles.cancelButton}
+                onPress={() => setShowLogoutModal(false)}
+              >
+                <Text style={styles.cancelButtonText}>Cancel</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={styles.confirmLogoutButton}
+                onPress={confirmLogout}
+              >
+                <Text style={styles.confirmLogoutButtonText}>Logout</Text>
+              </TouchableOpacity>
+            </View>
+          </TouchableOpacity>
+        </TouchableOpacity>
+      </Modal>
     </SafeAreaView>
   );
 }
 
 // Main Tab Navigator dengan clean design
-function MainApp() {
+function MainApp({ onLogout }) {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -858,7 +970,9 @@ function MainApp() {
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="AI Features" component={AIFeaturesScreen} />
       <Tab.Screen name="Explore" component={MapScreen} />
-      <Tab.Screen name="Profile" component={ProfileScreen} />
+      <Tab.Screen name="Profile">
+        {(props) => <ProfileScreen {...props} onLogout={onLogout} />}
+      </Tab.Screen>
     </Tab.Navigator>
   );
 }
@@ -867,16 +981,21 @@ function MainApp() {
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [isRegistered, setIsRegistered] = useState(false);
+  const [hasSelectedRole, setHasSelectedRole] = useState(false);
   const [userProfile, setUserProfile] = useState(null);
+  const [showLogin, setShowLogin] = useState(false);
 
   useEffect(() => {
     const initApp = async () => {
       try {
         // Check if user is already registered
         const savedProfile = await AsyncStorage.getItem('userProfile');
-        if (savedProfile) {
+        const savedRole = await AsyncStorage.getItem('userRole');
+        
+        if (savedProfile && savedRole) {
           setUserProfile(JSON.parse(savedProfile));
           setIsRegistered(true);
+          setHasSelectedRole(true);
         }
         
         // Simulate app initialization
@@ -891,14 +1010,49 @@ export default function App() {
     initApp();
   }, []);
 
+  const handleRoleSelection = async (role) => {
+    try {
+      await AsyncStorage.setItem('userRole', role);
+      setHasSelectedRole(true);
+    } catch (error) {
+      console.log('Error saving user role:', error);
+    }
+  };
+
   const handleRegistrationComplete = async (formData) => {
     try {
       // Save user profile to AsyncStorage
-      await AsyncStorage.setItem('userProfile', JSON.stringify(formData));
-      setUserProfile(formData);
+      const profileWithRole = { ...formData, role: formData.role || 'tourist' };
+      await AsyncStorage.setItem('userProfile', JSON.stringify(profileWithRole));
+      setUserProfile(profileWithRole);
       setIsRegistered(true);
+      setShowLogin(false);
     } catch (error) {
       console.log('Error saving user profile:', error);
+    }
+  };
+
+  const handleLoginSuccess = async (userData) => {
+    try {
+      // Save user profile to AsyncStorage
+      const profileWithRole = { ...userData, role: userData.role || 'tourist' };
+      await AsyncStorage.setItem('userProfile', JSON.stringify(profileWithRole));
+      setUserProfile(profileWithRole);
+      setIsRegistered(true);
+      setShowLogin(false);
+    } catch (error) {
+      console.log('Error saving user profile:', error);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await AsyncStorage.multiRemove(['userProfile', 'userRole']);
+      setUserProfile(null);
+      setIsRegistered(false);
+      setHasSelectedRole(false);
+    } catch (error) {
+      console.log('Error during logout:', error);
     }
   };
 
@@ -918,19 +1072,60 @@ export default function App() {
     );
   }
 
-  if (!isRegistered) {
+  if (!hasSelectedRole) {
     return (
       <NavigationContainer>
         <StatusBar style="dark" backgroundColor="#ffffff" />
-        <RegisterScreen onComplete={handleRegistrationComplete} />
+        <RoleSelectionScreen onRoleSelect={handleRoleSelection} />
       </NavigationContainer>
+    );
+  }
+
+  if (!isRegistered) {
+    // Show login screen if user chooses to login
+    if (showLogin) {
+      return (
+        <NavigationContainer>
+          <StatusBar style="dark" backgroundColor="#ffffff" />
+          <LoginScreen 
+            onLoginSuccess={handleLoginSuccess}
+            onRegisterPress={() => setShowLogin(false)}
+          />
+        </NavigationContainer>
+      );
+    }
+    
+    // Show registration screen with option to switch to login
+    return (
+      <NavigationContainer>
+        <StatusBar style="dark" backgroundColor="#ffffff" />
+        <View style={styles.authContainer}>
+          <RegisterScreen onComplete={handleRegistrationComplete} />
+          <TouchableOpacity 
+            style={styles.switchAuthButton}
+            onPress={() => setShowLogin(true)}
+          >
+            <Text style={styles.switchAuthText}>Already have an account? </Text>
+            <Text style={styles.switchAuthLink}>Login</Text>
+          </TouchableOpacity>
+        </View>
+      </NavigationContainer>
+    );
+  }
+
+  // Determine which app to show based on user role
+  const userRole = userProfile?.role || 'tourist';
+  
+  if (userRole === 'guide') {
+    return (
+      <GuideApp userProfile={userProfile} onLogout={handleLogout} />
     );
   }
 
   return (
     <NavigationContainer>
       <StatusBar style="dark" backgroundColor="#ffffff" />
-      <MainApp />
+      <MainApp onLogout={handleLogout} />
     </NavigationContainer>
   );
 }
@@ -1381,5 +1576,135 @@ const styles = StyleSheet.create({
   },
   servicePlaceholder: {
     width: 40,
+  },
+  // Auth container styles
+  authContainer: {
+    flex: 1,
+    backgroundColor: '#f8f9fa',
+  },
+  switchAuthButton: {
+    position: 'absolute',
+    bottom: 40,
+    alignSelf: 'center',
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#ffffff',
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 20,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  switchAuthText: {
+    fontSize: 14,
+    color: '#5f6368',
+  },
+  switchAuthLink: {
+    fontSize: 14,
+    color: '#1a73e8',
+    fontWeight: '600',
+  },
+  // Logout button styles
+  logoutButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#fef2f2',
+    borderRadius: 12,
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    borderWidth: 1,
+    borderColor: '#fee2e2',
+    marginHorizontal: 20,
+    marginBottom: 20,
+  },
+  logoutButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#ea4335',
+    marginLeft: 8,
+  },
+  // Logout modal styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  logoutModalContent: {
+    backgroundColor: '#ffffff',
+    borderRadius: 20,
+    padding: 24,
+    width: width - 48,
+    maxWidth: 400,
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+  },
+  logoutModalHeader: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  logoutIconContainer: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: '#fef2f2',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  logoutModalTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#202124',
+    textAlign: 'center',
+    marginBottom: 12,
+  },
+  logoutModalMessage: {
+    fontSize: 14,
+    color: '#5f6368',
+    textAlign: 'center',
+    lineHeight: 20,
+    marginBottom: 24,
+  },
+  logoutModalButtons: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  cancelButton: {
+    flex: 1,
+    backgroundColor: '#f8f9fa',
+    borderRadius: 12,
+    paddingVertical: 14,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#e8eaed',
+  },
+  cancelButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#5f6368',
+  },
+  confirmLogoutButton: {
+    flex: 1,
+    backgroundColor: '#ea4335',
+    borderRadius: 12,
+    paddingVertical: 14,
+    alignItems: 'center',
+    elevation: 2,
+    shadowColor: '#ea4335',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+  },
+  confirmLogoutButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#ffffff',
   },
 });
